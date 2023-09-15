@@ -1,8 +1,9 @@
-const user = require("../models/user");
+const User = require("../models/user");
 const bcrypt = require("bcrypt"); //pour générer des un cryptage de mdp
 const jwt = require("jsonwebtoken"); //pour générer des token
 
 exports.signup = (req, res, next) => {
+  console.log(req.body);
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
@@ -39,7 +40,11 @@ exports.login = (req, res, next) => {
             ),
           });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) =>
+          res.status(500).json({ error: "authentification échoué" })
+        );
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) =>
+      res.status(500).json({ error: "authentification échoué" })
+    );
 };
