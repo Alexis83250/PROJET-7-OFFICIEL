@@ -159,6 +159,24 @@ async function addRating(req, res, next) {
     });*/
 }
 
+async function getBestRatedBooks(req, res, next) {
+  try {
+    const bestRatedBooks = await Thing.find()
+      .sort({ averageRating: -1 })
+      .limit(3);
+
+    // Ajoutez des logs pour vérifier les étapes intermédiaires
+    console.log("Best Rated Books:", bestRatedBooks);
+
+    res.status(200).json(bestRatedBooks);
+  } catch (error) {
+    console.error("Error in getBestRatedBooks:", error);
+    res.status(500).json({
+      error: "Erreur lors de la récupération des livres les mieux notés.",
+    });
+  }
+}
+
 module.exports = {
   createThing,
   getOneThing,
@@ -166,4 +184,5 @@ module.exports = {
   deleteThing,
   getAllStuff,
   addRating,
+  getBestRatedBooks,
 };
