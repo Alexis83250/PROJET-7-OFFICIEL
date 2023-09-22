@@ -11,5 +11,7 @@ router.post("/", auth, multer, stuffCtrl.createThing);
 router.get("/:id", stuffCtrl.getOneThing);
 router.put("/:id", auth, multer, stuffCtrl.modifyThing);
 router.delete("/:id", auth, stuffCtrl.deleteThing);
+router.post("/:id/rating", auth, stuffCtrl.addRating);
+//router.get("/bestrating", stuffCtrl.getBestRatedBooks);
 
 module.exports = router;

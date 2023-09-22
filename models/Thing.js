@@ -7,12 +7,13 @@ const thingSchema = mongoose.Schema({
   year: { type: Number, required: true },
   genre: { type: String, required: true },
   imageUrl: { type: String, required: true },
-  rating: [
+  ratings: [
     {
       userId: { type: String, required: true },
       grade: { type: Number, required: true },
     },
   ],
+  averageRating: { type: Number, default: 0, required: true },
 });
 
 module.exports = mongoose.model("Thing", thingSchema);

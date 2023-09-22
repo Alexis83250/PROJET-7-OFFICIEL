@@ -1,7 +1,8 @@
 const Thing = require("../models/Thing");
+const ratingSchema = require("../models/Ratings");
 const fs = require("fs");
 
-exports.createThing = (req, res, next) => {
+async function createThing(req, res, next) {
   console.log(req.body);
   const thingObject = JSON.parse(req.body.book);
   delete thingObject._id;
@@ -22,23 +23,29 @@ exports.createThing = (req, res, next) => {
     .catch((error) => {
       res.status(400).json({ error });
     });
-};
+}
 
-exports.getOneThing = (req, res, next) => {
+async function getOneThing(req, res, next) {
   Thing.findOne({
     _id: req.params.id,
   })
     .then((thing) => {
+      if (!thing) {
+        return res.status(404).json({
+          error: "Thing not found",
+        });
+      }
       res.status(200).json(thing);
     })
     .catch((error) => {
-      res.status(404).json({
-        error: error,
+      res.status(500).json({
+        error: "Server error",
       });
     });
-};
+  console.log(req.params.id);
+}
 
-exports.modifyThing = (req, res, next) => {
+async function modifyThing(req, res, next) {
   const thingObject = req.file
     ? {
         ...JSON.parse(req.body.thing),
@@ -69,9 +76,9 @@ exports.modifyThing = (req, res, next) => {
     .catch((error) => {
       res.status(400).json({ error });
     });
-};
+}
 
-exports.deleteThing = (req, res, next) => {
+async function deleteThing(req, res, next) {
   Thing.findOne({ _id: req.params.id })
     .then((thing) => {
       if (thing.userId != req.auth.userId) {
@@ -90,9 +97,9 @@ exports.deleteThing = (req, res, next) => {
     .catch((error) => {
       res.status(500).json({ error: "authentification échoué pour supprimer" });
     });
-};
+}
 
-exports.getAllStuff = (req, res, next) => {
+async function getAllStuff(req, res, next) {
   Thing.find()
     .then((things) => {
       res.status(200).json(things);
@@ -102,4 +109,61 @@ exports.getAllStuff = (req, res, next) => {
         error: error,
       });
     });
+}
+
+//ajout des notes
+async function addRating(req, res, next) {
+  const userId = req.auth.userId;
+  const bookId = req.params.id;
+  const grade = req.body.rating;
+
+  console.log("UserID:", userId);
+  console.log("BookID:", bookId);
+  console.log("Grade:", grade);
+
+  if (grade < 1 || grade > 5) {
+    return res
+      .status(400)
+      .json({ error: "La notation doit être comprise entre 1 et 5." });
+  }
+  const thing = await Thing.findOne({ _id: bookId });
+  if (!thing) {
+    return res.status(404).json({ error: "Livre non trouvé." });
+  }
+  /*Thing.findOne({ _id: bookId })
+    .then((thing) => {
+      if (!thing) {
+        return res.status(404).json({ error: "Livre non trouvé." });
+      }*/
+
+  const existingRating = thing.ratings.find(
+    (rating) => rating.userId === userId
+  );
+
+  if (existingRating) {
+    existingRating.grade = grade;
+  } else {
+    thing.ratings.push({ userId, grade });
+  }
+  const totalRatings = thing.ratings.reduce(
+    (sum, rating) => sum + rating.grade,
+    0
+  );
+  const averageRating = totalRatings / thing.ratings.length;
+  thing.averageRating = averageRating.toFixed(2);
+  const updatingBook = await thing.save();
+  return res.status(201).json(updatingBook);
+  /*})
+    .catch((error) => {
+      res.status(500).json({ error: "Erreur" });
+    });*/
+}
+
+module.exports = {
+  createThing,
+  getOneThing,
+  modifyThing,
+  deleteThing,
+  getAllStuff,
+  addRating,
 };
