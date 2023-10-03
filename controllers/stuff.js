@@ -49,7 +49,7 @@ async function getOneThing(req, res, next) {
 async function modifyThing(req, res, next) {
   const thingObject = req.file
     ? {
-        ...JSON.parse(req.body.book),
+        ...JSON.parse(req.body.book), //modif par book
         imageUrl: `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`,
