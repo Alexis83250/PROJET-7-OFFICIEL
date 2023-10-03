@@ -1,6 +1,7 @@
 const Thing = require("../models/Thing");
 const ratingSchema = require("../models/Ratings");
 const fs = require("fs");
+//projet fini
 
 async function createThing(req, res, next) {
   console.log(req.body);
