@@ -4,7 +4,7 @@ const fs = require("fs");
 //projet fini
 
 async function createThing(req, res, next) {
-  console.log(req.body);
+  //console.log(req.body);
   const thingObject = JSON.parse(req.body.book);
   delete thingObject._id;
   delete thingObject._userId;
@@ -43,7 +43,7 @@ async function getOneThing(req, res, next) {
         error: "Server error",
       });
     });
-  console.log(req.params.id);
+  //console.log(req.params.id);
 }
 
 async function modifyThing(req, res, next) {
@@ -118,9 +118,9 @@ async function addRating(req, res, next) {
   const bookId = req.params.id;
   const grade = req.body.rating;
 
-  console.log("UserID:", userId);
-  console.log("BookID:", bookId);
-  console.log("Grade:", grade);
+  //console.log("UserID:", userId);
+  //console.log("BookID:", bookId);
+  //console.log("Grade:", grade);
 
   if (grade < 1 || grade > 5) {
     return res
@@ -167,11 +167,11 @@ async function getBestRatedBooks(req, res, next) {
       .limit(3);
 
     // Ajoutez des logs pour vérifier les étapes intermédiaires
-    console.log("Best Rated Books:", bestRatedBooks);
+    //console.log("Best Rated Books:", bestRatedBooks);
 
     res.status(200).json(bestRatedBooks);
   } catch (error) {
-    console.error("Error in getBestRatedBooks:", error);
+    //console.error("Error in getBestRatedBooks:", error);
     res.status(500).json({
       error: "Erreur lors de la récupération des livres les mieux notés.",
     });
